@@ -1,8 +1,11 @@
 package com.example.tacocloud.tacos;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.example.tacocloud.data.IngredientRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,18 +15,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.extern.slf4j.Slf4j;
 
-import com.example.tacocloud.tacos.Ingredient;
-
 
 import javax.validation.Valid;
 import org.springframework.validation.Errors;
+
 
 @Slf4j
 @Controller
 @RequestMapping("/design")
 public class DesignTacoController {
 
-    @ModelAttribute
+    private final IngredientRepository ingredientRepo;
+
+    public DesignTacoController(IngredientRepository ingredientRepo) {
+        this.ingredientRepo = ingredientRepo;
+    }
+
+
+/*    @ModelAttribute
     public void addIngredientsToModel(Model model) {
         List<Ingredient> ingredients = Arrays.asList(
                 new Ingredient("FLTO", "Flour Tortilla", Ingredient.Type.WRAP),
@@ -43,7 +52,7 @@ public class DesignTacoController {
             model.addAttribute(type.toString().toLowerCase(),
                     filterByType(ingredients, type));
         }
-    }
+    }*/
 
     @ModelAttribute(name = "Order")
     public TacoOrder order() {
@@ -56,7 +65,16 @@ public class DesignTacoController {
     }
 
     @GetMapping
-    public String showDesignForm() {
+    public String showDesignForm(Model model) {
+        List<Ingredient> ingredients = new ArrayList<>();
+        ingredientRepo.findAll().forEach(i -> ingredients.add(i));
+
+        Ingredient.Type[] types = Ingredient.Type.values();
+        for(Ingredient.Type type : types){
+            model.addAttribute(type.toString().toLowerCase(),
+                    filterByType(ingredients, type));
+        }
+
         return "design";
     }
 

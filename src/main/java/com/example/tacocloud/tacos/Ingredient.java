@@ -1,14 +1,17 @@
 package com.example.tacocloud.tacos;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Data
 @RequiredArgsConstructor
-@AllArgsConstructor
+//@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
+@Entity
 public class Ingredient {
 
+    @Id
     private String id;
     private String name;
     private Type type;
